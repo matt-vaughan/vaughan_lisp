@@ -1,14 +1,34 @@
 
 from vaughanparse import parser
 
+class Closure:
+    namespace = dict()
+    expression = None
+
+    def __init__(self, expression, namespace):
+        self.namespace = namespace
+        self.expression = expression
+
 class Interp:
 
-    stack = []
     namespace = dict()
+    closures = []
 
     def exec_string(self, input):
         ast = parser.parse(input)
 
+    # get lambda parameters
+    def get_params(self, list):
+        pass
+
+    # produce the closure for the expression
+    def closure(self, params, expression, namespace):
+        closure_key = len(self.closures)
+        cls = Closure(expression, namespace)
+        self.closures.append(cls)
+        return ('closure', closure_key)
+
+    # execute statment
     def exec(self, ast):
         match ast:
             # literal cases: ints, floats, strings
@@ -40,15 +60,19 @@ class Interp:
 
                 return self.exec(self.namespace[name])
             
-            # define case, set values in namespace
+            # define case, set values in namespace or produce closure
             case ('define', name, expression):
-                self.namespace[name] = expression
+                self.namespace[name] = self.exec(expression)
                 return name
+            
+            # lambda (build closure)
+            case ('lambda', params, expression):
+                cls = self.closure(params, expression, self.namespace)
+                return f"make closure"
 
             # function application
             case ('application', name, list):
-                return f"applied {name}"
-
+                return f"apply {name}"
 
 if __name__ == "__main__":
 

@@ -8,6 +8,7 @@ tokens = [
     'RPAREN',
     'NAME',
     'DEFINE',
+    'LAMBDA',
     'QUOTE',
     'DOUBLE_QUOTE'
 ]
@@ -15,8 +16,9 @@ tokens = [
 # Define regular expressions for tokens
 t_LPAREN        = r'\('
 t_RPAREN        = r'\)'
-t_NAME          = r'(?!define\b)[a-zA-Z_\?!@#\$%\^&\*\+\-\\=:;]{1}[0-9a-zA-Z_\?!@#\$%\^&\*\+\-\\=:;]*'
+t_NAME          = r'(?!define|lambda\b)[a-zA-Z_\?!@#\$%\^&\*\+\-\\=:;]{1}[0-9a-zA-Z_\?!@#\$%\^&\*\+\-\\=:;]*'
 t_DEFINE        = r'define'
+t_LAMBDA        = r'lambda'
 
 def t_FLOAT(t):
     r'\d+\.\d+|\-\d+\.\d+'
@@ -56,7 +58,7 @@ lexer = lex.lex()
 
 """
 # Test the lexer
-lexer.input( '(+ 10 20)\n(define x 10)' )
+lexer.input( '(lambda (x) (+ x 1))' )
 
 tokenized = []
 while True:

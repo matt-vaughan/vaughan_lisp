@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'statementDEFINE DOUBLE_QUOTE FLOAT INT LPAREN NAME QUOTE RPARENstatement : define\n                 | expressiondefine : LPAREN DEFINE NAME expression RPARENexpression : NAMEexpression : QUOTEexpression : DOUBLE_QUOTEexpression : INTexpression : FLOATexpression : LPAREN NAME list RPARENexpression : LPAREN list RPARENlist : expressionlist : expression list'
+_lr_signature = 'statementDEFINE DOUBLE_QUOTE FLOAT INT LAMBDA LPAREN NAME QUOTE RPARENstatement : define\n                 | expressiondefine : LPAREN DEFINE NAME expression RPARENexpression : NAMEexpression : QUOTEexpression : DOUBLE_QUOTEexpression : INTexpression : FLOATexpression : LPAREN NAME list RPARENexpression : LPAREN LAMBDA LPAREN params RPAREN expression RPARENparams : NAMEparams : NAME paramsexpression : LPAREN list RPARENlist : expressionlist : expression list'
     
-_lr_action_items = {'LPAREN':([0,4,5,6,7,8,9,10,12,13,15,18,20,],[4,10,-4,-5,-6,-7,-8,10,10,10,10,-10,-9,]),'NAME':([0,4,5,6,7,8,9,10,11,12,13,15,18,20,],[5,12,-4,-5,-6,-7,-8,12,15,5,5,5,-10,-9,]),'QUOTE':([0,4,5,6,7,8,9,10,12,13,15,18,20,],[6,6,-4,-5,-6,-7,-8,6,6,6,6,-10,-9,]),'DOUBLE_QUOTE':([0,4,5,6,7,8,9,10,12,13,15,18,20,],[7,7,-4,-5,-6,-7,-8,7,7,7,7,-10,-9,]),'INT':([0,4,5,6,7,8,9,10,12,13,15,18,20,],[8,8,-4,-5,-6,-7,-8,8,8,8,8,-10,-9,]),'FLOAT':([0,4,5,6,7,8,9,10,12,13,15,18,20,],[9,9,-4,-5,-6,-7,-8,9,9,9,9,-10,-9,]),'$end':([1,2,3,5,6,7,8,9,18,20,21,],[0,-1,-2,-4,-5,-6,-7,-8,-10,-9,-3,]),'DEFINE':([4,],[11,]),'RPAREN':([5,6,7,8,9,12,13,14,16,17,18,19,20,],[-4,-5,-6,-7,-8,-4,-11,18,20,-12,-10,21,-9,]),}
+_lr_action_items = {'LPAREN':([0,4,5,6,7,8,9,10,12,13,15,16,19,22,26,29,],[4,10,-4,-5,-6,-7,-8,10,10,10,20,10,-13,-9,10,-10,]),'NAME':([0,4,5,6,7,8,9,10,11,12,13,16,19,20,22,24,26,29,],[5,12,-4,-5,-6,-7,-8,12,16,5,5,5,-13,24,-9,24,5,-10,]),'QUOTE':([0,4,5,6,7,8,9,10,12,13,16,19,22,26,29,],[6,6,-4,-5,-6,-7,-8,6,6,6,6,-13,-9,6,-10,]),'DOUBLE_QUOTE':([0,4,5,6,7,8,9,10,12,13,16,19,22,26,29,],[7,7,-4,-5,-6,-7,-8,7,7,7,7,-13,-9,7,-10,]),'INT':([0,4,5,6,7,8,9,10,12,13,16,19,22,26,29,],[8,8,-4,-5,-6,-7,-8,8,8,8,8,-13,-9,8,-10,]),'FLOAT':([0,4,5,6,7,8,9,10,12,13,16,19,22,26,29,],[9,9,-4,-5,-6,-7,-8,9,9,9,9,-13,-9,9,-10,]),'$end':([1,2,3,5,6,7,8,9,19,22,25,29,],[0,-1,-2,-4,-5,-6,-7,-8,-13,-9,-3,-10,]),'DEFINE':([4,],[11,]),'LAMBDA':([4,10,],[15,15,]),'RPAREN':([5,6,7,8,9,12,13,14,17,18,19,21,22,23,24,27,28,29,],[-4,-5,-6,-7,-8,-4,-14,19,22,-15,-13,25,-9,26,-11,-12,29,-10,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'statement':([0,],[1,]),'define':([0,],[2,]),'expression':([0,4,10,12,13,15,],[3,13,13,13,13,19,]),'list':([4,10,12,13,],[14,14,16,17,]),}
+_lr_goto_items = {'statement':([0,],[1,]),'define':([0,],[2,]),'expression':([0,4,10,12,13,16,26,],[3,13,13,13,13,21,28,]),'list':([4,10,12,13,],[14,14,17,18,]),'params':([20,24,],[23,27,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,16 +27,19 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> statement","S'",1,None,None,None),
-  ('statement -> define','statement',1,'p_statement','vaughanparse.py',7),
-  ('statement -> expression','statement',1,'p_statement','vaughanparse.py',8),
-  ('define -> LPAREN DEFINE NAME expression RPAREN','define',5,'p_define','vaughanparse.py',12),
-  ('expression -> NAME','expression',1,'p_expression_name','vaughanparse.py',16),
-  ('expression -> QUOTE','expression',1,'p_expression_quote','vaughanparse.py',20),
-  ('expression -> DOUBLE_QUOTE','expression',1,'p_expression_doublequote','vaughanparse.py',24),
-  ('expression -> INT','expression',1,'p_expression_int','vaughanparse.py',28),
-  ('expression -> FLOAT','expression',1,'p_expression_float','vaughanparse.py',32),
-  ('expression -> LPAREN NAME list RPAREN','expression',4,'p_expression_application','vaughanparse.py',36),
-  ('expression -> LPAREN list RPAREN','expression',3,'p_expression_list','vaughanparse.py',39),
-  ('list -> expression','list',1,'p_list_tail','vaughanparse.py',42),
-  ('list -> expression list','list',2,'p_list_head','vaughanparse.py',46),
+  ('statement -> define','statement',1,'p_statement','vaughanparse.py',8),
+  ('statement -> expression','statement',1,'p_statement','vaughanparse.py',9),
+  ('define -> LPAREN DEFINE NAME expression RPAREN','define',5,'p_define','vaughanparse.py',13),
+  ('expression -> NAME','expression',1,'p_expression_name','vaughanparse.py',17),
+  ('expression -> QUOTE','expression',1,'p_expression_quote','vaughanparse.py',21),
+  ('expression -> DOUBLE_QUOTE','expression',1,'p_expression_doublequote','vaughanparse.py',25),
+  ('expression -> INT','expression',1,'p_expression_int','vaughanparse.py',29),
+  ('expression -> FLOAT','expression',1,'p_expression_float','vaughanparse.py',33),
+  ('expression -> LPAREN NAME list RPAREN','expression',4,'p_expression_application','vaughanparse.py',37),
+  ('expression -> LPAREN LAMBDA LPAREN params RPAREN expression RPAREN','expression',7,'p_expression_lambda','vaughanparse.py',41),
+  ('params -> NAME','params',1,'p_params_term','vaughanparse.py',45),
+  ('params -> NAME params','params',2,'p_params_nonterm','vaughanparse.py',49),
+  ('expression -> LPAREN list RPAREN','expression',3,'p_expression_list','vaughanparse.py',53),
+  ('list -> expression','list',1,'p_list_tail','vaughanparse.py',57),
+  ('list -> expression list','list',2,'p_list_head','vaughanparse.py',61),
 ]
