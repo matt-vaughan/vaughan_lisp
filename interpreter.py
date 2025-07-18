@@ -8,7 +8,7 @@ class Closure:
     def __init__(self, params, expression, namespace):
         self.namespace = namespace
         for param in params:
-            del self.namespace[param]
+            self.namespace.pop(param, None)
 
         self.expression = expression
         self.params = params
