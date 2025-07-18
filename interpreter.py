@@ -5,7 +5,6 @@ from vaughanparse import parser
 DEBUG = True
 
 class Closure:
-
     def __init__(self, params, expression, namespace):
         self.namespace = namespace
         for param in params:
@@ -33,8 +32,9 @@ class Closure:
         interp = Interp(self.namespace)
         return interp.exec(self.expression)
     
-
 class Interp:
+
+    builtins = ['+','-','*','/']
 
     def __init__(self, namespace):
         self.namespace = namespace
@@ -43,6 +43,17 @@ class Interp:
     def exec_string(self, input):
         ast = parser.parse(input)
 
+    def builtin(self, name, args):
+        match name:
+            case '+':
+                return args[0] + args[1]
+            case '-':
+                return args[0] - args[1]
+            case '*':
+                return args[0] * args[1]
+            case '/':
+                return args[0] / args[1]
+            
     # produce the closure for the expression
     def closure(self, params, expression, namespace):
         closure_index = len(self.closures)
@@ -96,6 +107,12 @@ class Interp:
 
             # function application
             case ('application', name, list):
+                if name in self.builtins:
+                    args = []
+                    for arg in list:
+                        args.append(self.exec(arg))
+                    return self.builtin(name, args)
+
                 if name not in self.namespace:
                     return f"error: {name} is not in namespace"
                 
