@@ -1,32 +1,54 @@
 
+import copy
 from vaughanparse import parser
 
-class Closure:
-    namespace = dict()
-    expression = None
+DEBUG = True
 
-    def __init__(self, expression, namespace):
+class Closure:
+
+    def __init__(self, params, expression, namespace):
         self.namespace = namespace
+        for param in params:
+            del self.namespace[param]
+
         self.expression = expression
+        self.params = params
+        if DEBUG:
+            print ("closure contains: ")
+            for key, value in namespace.items():
+                print(f"{key} -> {value}")
+    
+    def bind_arguments(self, args):
+        if len(args) != len(self.params):
+            raise ValueError(f"Expected {len(self.params)} arguments and got {len(args)}")
+        
+        for i in range(0, len(args)):
+            if DEBUG:
+                print(f"binding {self.params[i]} to {args[i]}")
+            self.namespace[self.params[i]] = args[i] 
+    
+    def apply(self, args):
+
+        self.bind_arguments(args)
+        interp = Interp(self.namespace)
+        return interp.exec(self.expression)
+    
 
 class Interp:
 
-    namespace = dict()
-    closures = []
+    def __init__(self, namespace):
+        self.namespace = namespace
+        self.closures = []
 
     def exec_string(self, input):
         ast = parser.parse(input)
 
-    # get lambda parameters
-    def get_params(self, list):
-        pass
-
     # produce the closure for the expression
     def closure(self, params, expression, namespace):
-        closure_key = len(self.closures)
-        cls = Closure(expression, namespace)
+        closure_index = len(self.closures)
+        cls = Closure(params, expression, namespace)
         self.closures.append(cls)
-        return ('closure', closure_key)
+        return ('closure', closure_index)
 
     # execute statment
     def exec(self, ast):
@@ -55,11 +77,13 @@ class Interp:
 
             # name lookup case
             case ('name', name):
+                if DEBUG:
+                    print(f"looking up {name}")
                 if name not in self.namespace:
                     return f"error: {name} not in namespace" 
 
-                return self.exec(self.namespace[name])
-            
+                return self.namespace[name] # THOUGHT: perhaps conditional exec?? 
+                        
             # define case, set values in namespace or produce closure
             case ('define', name, expression):
                 self.namespace[name] = self.exec(expression)
@@ -67,16 +91,36 @@ class Interp:
             
             # lambda (build closure)
             case ('lambda', params, expression):
-                cls = self.closure(params, expression, self.namespace)
-                return f"make closure"
+                new_namespace = copy.deepcopy(self.namespace)
+                return self.closure(params, expression, new_namespace)
 
             # function application
             case ('application', name, list):
+                if name not in self.namespace:
+                    return f"error: {name} is not in namespace"
+                
+                f = self.namespace[name]
+                match f:
+                    case ('closure', closure_index):
+                        # evaluate the arguments
+                        args = []
+                        for arg in list:
+                            args.append(self.exec(arg))
+                        
+                        # apply
+                        cls = self.closures[closure_index]
+                        return cls.apply(args)
+                    case _:
+                        return f"error: {name} does not refer to a closure"
+                    
                 return f"apply {name}"
+            
+            case _:
+                return ast
 
 if __name__ == "__main__":
 
-    interp = Interp()
+    interp = Interp( dict() )
 
     while True:
         try:
